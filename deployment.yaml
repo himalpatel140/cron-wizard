@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cron-wizard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cron-wizard
+  template:
+    metadata:
+      labels:
+        app: cron-wizard
+    spec:
+      containers:
+        - name: cron-wizard
+          image: us-central1-docker.pkg.dev/cron-wizard/cron-wizard-repo/cron-wizard:v1
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
