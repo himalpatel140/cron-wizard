@@ -40,9 +40,21 @@ jobs:
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}
 
+      - name: Install GKE auth plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin --quiet
+
       - name: Get GKE credentials
         run: |
           gcloud container clusters get-credentials ${{ env.GKE_CLUSTER }} --zone ${{ env.GKE_ZONE }}
+        env:
+          USE_GKE_GCLOUD_AUTH_PLUGIN: "True"
+
+      - name: Deploy to GKE
+        run: |
+          kubectl set image deployment/${{ env.IMAGE }} ${{ env.IMAGE }}=${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ github.sha }}
+        env:
+          USE_GKE_GCLOUD_AUTH_PLUGIN: "True"
 
       - name: Deploy to GKE
         run: |
